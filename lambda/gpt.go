@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -43,8 +45,24 @@ func CallGPTGradingAPI(answer string) (map[string]string, error) {
 	requestBody := GPTRequest{
 		Model: "gpt-4o-mini",
 		Messages: []Message{
-			{Role: "system", Content: "You are an English language proficiency evaluator. Assess the given answer, but the proficiency level should not exceed CEFR B2-High or IELTS 7.0. Provide feedback in a simple way. The feedback should include specific sentence corrections and vocabulary suggestions, and explain why these changes improve the answer. Avoid using special characters like ** or ##."},
-			{Role: "user", Content: fmt.Sprintf("Answer: \"%s\"\n\n1. Provide a CEFR level and IELTS score.\n2. Give specific suggestions for improving the grammar, sentence structure, and vocabulary. 3. Explain why these changes make the answer better.", answer)},
+			{Role: "system", Content: `You are an English language proficiency evaluator. Assess the given answer, ensuring the proficiency level does not exceed CEFR B2-High or IELTS 7.0. Provide feedback in the following JSON format:
+
+		{
+			"CEFR": "B1/B2/etc",
+			"IELTS": "5.5/6.0/etc",
+			"feedback": "Your detailed feedback here, including specific suggestions for improvement.",
+			"vocabulary": ["word1", "word2", "word3"],
+			"grammar": ["grammar point 1", "grammar point 2"],
+			"improvements": ["suggestion 1", "suggestion 2"]
+		}
+
+		Ensure that the CEFR level is one of: A1, A2, B1, B2 (not exceeding B2-High).
+		Ensure that the IELTS score is between 1.0 and 7.0 in 0.5 increments.
+		In the feedback, analyze used vocabulary, grammar mistakes, and provide improvement suggestions.
+		The vocabulary field should contain 3-5 words at B2-High level that could improve the answer.
+		The grammar field should list 2-3 grammar points that need improvement.
+		The improvements field should provide 2-3 specific suggestions to enhance the answer.`},
+			{Role: "user", Content: fmt.Sprintf("Answer: \"%s\"\n\nProvide the assessment in the specified JSON format.", answer)},
 		},
 		Temperature: 0.7,
 	}
@@ -86,39 +104,103 @@ func CallGPTGradingAPI(answer string) (map[string]string, error) {
 	}
 
 	if len(gptResponse.Choices) > 0 {
-		response := map[string]string{
-			"CEFR":     extractCEFR(gptResponse.Choices[0].Message.Content),
-			"IELTS":    extractIELTS(gptResponse.Choices[0].Message.Content),
-			"feedback": gptResponse.Choices[0].Message.Content,
-		}
-		return response, nil
+		return parseStructuredResponse(gptResponse.Choices[0].Message.Content)
 	}
 
 	return nil, fmt.Errorf("no response from GPT API")
 }
 
-func extractCEFR(feedback string) string {
-	if strings.Contains(feedback, "CEFR: B2") {
-		return "B2"
+func parseStructuredResponse(content string) (map[string]string, error) {
+	var response map[string]interface{}
+	err := json.Unmarshal([]byte(content), &response)
+	if err != nil {
+		log.Printf("Error parsing structured response: %v", err)
+		return nil, err
 	}
-	return "N/A"
-}
 
-func extractIELTS(feedback string) string {
-	if strings.Contains(feedback, "IELTS: 6.5") {
-		return "6.5"
+	result := make(map[string]string)
+
+	validCEFR := map[string]bool{"A1": true, "A2": true, "B1": true, "B2": true}
+	if cefr, ok := response["CEFR"].(string); ok && validCEFR[cefr] {
+		result["CEFR"] = cefr
+	} else {
+		result["CEFR"] = "N/A"
 	}
-	return "N/A"
+
+	if ielts, ok := response["IELTS"].(string); ok {
+		score, err := strconv.ParseFloat(ielts, 64)
+		if err == nil && score >= 1.0 && score <= 7.0 && math.Mod(score*2, 1) == 0 {
+			result["IELTS"] = ielts
+		} else {
+			result["IELTS"] = "N/A"
+		}
+	} else {
+		result["IELTS"] = "N/A"
+	}
+
+	if feedback, ok := response["feedback"].(string); ok {
+		result["feedback"] = feedback
+	} else {
+		result["feedback"] = "No feedback provided"
+	}
+
+	if vocabulary, ok := response["vocabulary"].([]interface{}); ok {
+		vocabStrings := make([]string, len(vocabulary))
+		for i, v := range vocabulary {
+			vocabStrings[i] = fmt.Sprintf("%v", v)
+		}
+		result["vocabulary"] = strings.Join(vocabStrings, ", ")
+	} else {
+		result["vocabulary"] = "No vocabulary suggestions"
+	}
+
+	if grammar, ok := response["grammar"].([]interface{}); ok {
+		grammarStrings := make([]string, len(grammar))
+		for i, g := range grammar {
+			grammarStrings[i] = fmt.Sprintf("%v", g)
+		}
+		result["grammar"] = strings.Join(grammarStrings, ", ")
+	} else {
+		result["grammar"] = "No grammar points"
+	}
+
+	if improvements, ok := response["improvements"].([]interface{}); ok {
+		improvementStrings := make([]string, len(improvements))
+		for i, imp := range improvements {
+			improvementStrings[i] = fmt.Sprintf("%v", imp)
+		}
+		result["improvements"] = strings.Join(improvementStrings, ", ")
+	} else {
+		result["improvements"] = "No improvement suggestions"
+	}
+
+	return result, nil
 }
 
 func CallGPTTopicAPI() (map[string]Topic, error) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	url := "https://api.openai.com/v1/chat/completions"
-
 	requestBody := GPTRequest{
 		Model: "gpt-4o-mini",
 		Messages: []Message{
-			{Role: "system", Content: "You are an English teacher. Create 4 topics to test English proficiency. Each topic should be structured as a JSON object. Each topic should include a title, a description, and a requirement to write more than 100 words. Return the topics in the following format: {\"topic1\": {\"title\": \"\", \"description\": \"\"}, \"topic2\": {\"title\": \"\", \"description\": \"\"}, \"topic3\": {\"title\": \"\", \"description\": \"\"}, \"topic4\": {\"title\": \"\", \"description\": \"\"}}."},
+			{
+				Role: "system",
+				Content: `You are an English teacher. Create 4 topics to test English proficiency. Respond in the following format exactly:
+	
+	Topic 1: [Title]
+	Description: [Description]
+	
+	Topic 2: [Title]
+	Description: [Description]
+	
+	Topic 3: [Title]
+	Description: [Description]
+	
+	Topic 4: [Title]
+	Description: [Description]
+	
+	Do not include any other text in your response.`,
+			},
 		},
 		Temperature: 0.7,
 	}
