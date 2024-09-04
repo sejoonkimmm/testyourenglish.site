@@ -16,16 +16,21 @@ func HandleCheckRequest(ctx context.Context, request events.APIGatewayProxyReque
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Invalid request body"}, nil
 	}
 
-	// Call the GPT grading API (from gpt.go)
 	feedback, err := CallGPTGradingAPI(req.Text)
 	if err != nil {
 		log.Printf("Error calling GPT API: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Error calling GPT API"}, nil
 	}
 
+	feedbackResponse, err := json.Marshal(feedback)
+	if err != nil {
+		log.Printf("Error marshaling feedback response: %v", err)
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Error marshaling response"}, nil
+	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       feedback,
+		Body:       string(feedbackResponse), // 직렬화된 JSON 문자열을 응답 바디로 반환
 		Headers: map[string]string{
 			"Content-Type":                 "application/json",
 			"Access-Control-Allow-Origin":  "*",

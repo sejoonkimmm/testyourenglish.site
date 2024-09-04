@@ -15,9 +15,7 @@ func HandleTopicsRequest(ctx context.Context, request events.APIGatewayProxyRequ
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Error generating topics"}, nil
 	}
 
-	topicsResponse, err := json.Marshal(map[string][]string{
-		"topics": topics,
-	})
+	topicsResponse, err := json.Marshal(topics)
 	if err != nil {
 		log.Printf("Error marshaling topics response: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Error marshaling response"}, nil
