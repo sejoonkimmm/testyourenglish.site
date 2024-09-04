@@ -1,9 +1,9 @@
 # testyourenglish.site
 
 ## Documentation 📚
-[Define AWS Lamda function handler in Go](https://docs.aws.amazon.com/lambda/latest/dg/golang-handler.html)
+🔗 [Define AWS Lamda function handler in Go](https://docs.aws.amazon.com/lambda/latest/dg/golang-handler.html)
 
-[How to deploy your Static websites with AWS](https://github.com/sejoonkimmm/deploy_static_website_AWS)
+🔗 [How to deploy your Static websites with AWS](https://github.com/sejoonkimmm/deploy_static_website_AWS)
 
 ## Contributors 👏🏻
 

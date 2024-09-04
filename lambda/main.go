@@ -43,6 +43,7 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Invalid request body"}, nil
 	}
 
+	// GPT API를 호출하여 응답 받기
 	gptResponse, err := callGPTAPI(req.Text)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Error calling GPT API"}, nil
@@ -65,10 +66,10 @@ func callGPTAPI(prompt string) (string, error) {
 	url := "https://api.openai.com/v1/chat/completions"
 
 	requestBody := GPTRequest{
-		Model: "gpt-3.5-turbo",
+		Model: "gpt-4o-mini",
 		Messages: []Message{
-			{Role: "system", Content: "You are an English language evaluator. Assess the given text and provide feedback."},
-			{Role: "user", Content: prompt},
+			{Role: "system", Content: "You are a language proficiency evaluator. Assess the given text based on CEFR and IELTS standards, identify any grammatical, lexical, or structural issues, and suggest improvements."},
+			{Role: "user", Content: fmt.Sprintf("Text: \"%s\"\n\n1. Assess the text's proficiency level based on CEFR and IELTS.\n2. Identify any issues with grammar, vocabulary, or sentence structure.\n3. Provide suggestions to improve the text.", prompt)},
 		},
 		Temperature: 0.7,
 	}
