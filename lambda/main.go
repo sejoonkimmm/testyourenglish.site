@@ -38,7 +38,11 @@ type GPTResponse struct {
 }
 
 func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// 요청 바디를 로그로 출력하여 확인
+	if request.Body == "" {
+		log.Printf("Received empty body")
+		return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Empty request body"}, nil
+	}
+
 	log.Printf("Received request body: %s", request.Body)
 
 	var req Request
@@ -48,7 +52,6 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Invalid request body"}, nil
 	}
 
-	// GPT API를 호출하여 응답 받기
 	gptResponse, err := callGPTAPI(req.Text)
 	if err != nil {
 		log.Printf("Error calling GPT API: %v", err) // 에러 로그 추가
