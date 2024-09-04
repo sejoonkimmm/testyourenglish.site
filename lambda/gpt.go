@@ -105,14 +105,14 @@ func extractIELTS(feedback string) string {
 	return "N/A"
 }
 
-func CallGPTTopicAPI() (map[string]string, error) {
+func CallGPTTopicAPI() (map[string]map[string]string, error) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	url := "https://api.openai.com/v1/chat/completions"
 
 	requestBody := GPTRequest{
 		Model: "gpt-4o-mini",
 		Messages: []Message{
-			{Role: "system", Content: "You are an English teacher. Create 4 topics to test English proficiency. Each topic should include the sentence 'You must write more than 100 words.'"},
+			{Role: "system", Content: "You are an English teacher. Create 4 topics to test English proficiency. Each topic should be structured as a JSON object. Each topic should include a title, a description, and a requirement to write more than 100 words. Return the topics in the following format: {\"topic1\": {\"title\": \"\", \"description\": \"\"}, \"topic2\": {\"title\": \"\", \"description\": \"\"}, \"topic3\": {\"title\": \"\", \"description\": \"\"}, \"topic4\": {\"title\": \"\", \"description\": \"\"}}."},
 		},
 		Temperature: 0.7,
 	}
@@ -154,24 +154,16 @@ func CallGPTTopicAPI() (map[string]string, error) {
 	}
 
 	if len(gptResponse.Choices) > 0 {
-		rawTopics := strings.Split(gptResponse.Choices[0].Message.Content, "\n")
-		topics := make(map[string]string)
-
-		var currentTopic string
-		var topicCount int
-
-		for _, line := range rawTopics {
-			line = strings.TrimSpace(line)
-			if strings.HasPrefix(line, "Topic") {
-				topicCount++
-				currentTopic = fmt.Sprintf("topic%d", topicCount)
-				topics[currentTopic] = line
-			} else if currentTopic != "" && line != "" {
-				topics[currentTopic] += " " + line
-			}
+		// Parsing GPT response directly as a JSON object
+		var topics map[string]map[string]string
+		err := json.Unmarshal([]byte(gptResponse.Choices[0].Message.Content), &topics)
+		if err != nil {
+			log.Printf("Error unmarshaling topics JSON: %v", err)
+			return nil, err
 		}
 		return topics, nil
 	}
 
+	log.Printf("No topics found in GPT API response")
 	return nil, fmt.Errorf("no response from GPT API")
 }
