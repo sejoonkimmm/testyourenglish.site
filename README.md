@@ -16,9 +16,7 @@
       <a href="https://github.com/sejoonkimmm"><img src="https://img.shields.io/badge/GitHub-sejoonkimmm-blue?logo=github" alt="GitHub Badge" /></a>
       <br />
       <sub>Product Manager</sub>
-      <br />
       <sub>DevOps Engineer</sub>
-      <br />
       <sub>Go Developer</sub>
     </td>
     <td align="center">
@@ -31,9 +29,7 @@
       <a href="[https://github.com/clearsu](https://github.com/clearsu)"><img src="https://img.shields.io/badge/GitHub-clearsu-blue?logo=github" alt="GitHub Badge" /></a>
       <br />
       <sub>Frontend Developer</sub>
-      <br />
       <sub>Software Architecture</sub>
-      <br />
     </td>
   </tr>
 </table>
