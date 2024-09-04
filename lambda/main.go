@@ -48,13 +48,13 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	var req Request
 	err := json.Unmarshal([]byte(request.Body), &req)
 	if err != nil {
-		log.Printf("Error unmarshaling request: %v", err) // 에러 로그 추가
+		log.Printf("Error unmarshaling request: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Invalid request body"}, nil
 	}
 
 	gptResponse, err := callGPTAPI(req.Text)
 	if err != nil {
-		log.Printf("Error calling GPT API: %v", err) // 에러 로그 추가
+		log.Printf("Error calling GPT API: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Error calling GPT API"}, nil
 	}
 
@@ -83,41 +83,56 @@ func callGPTAPI(prompt string) (string, error) {
 		Temperature: 0.7,
 	}
 
+	log.Printf("GPT API Request Body: %+v", requestBody)
+
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
+		log.Printf("Error marshaling request body: %v", err)
 		return "", err
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
 	if err != nil {
+		log.Printf("Error creating HTTP request: %v", err)
 		return "", err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+apiKey)
 
+	log.Printf("Sending GPT API request to %s", url)
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		log.Printf("Error sending request to GPT API: %v", err)
 		return "", err
 	}
 	defer resp.Body.Close()
 
+	log.Printf("GPT API Response Status: %s", resp.Status)
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Printf("Error reading GPT API response body: %v", err)
 		return "", err
 	}
+
+	log.Printf("GPT API Response Body: %s", body)
 
 	var gptResponse GPTResponse
 	err = json.Unmarshal(body, &gptResponse)
 	if err != nil {
+		log.Printf("Error unmarshaling GPT API response: %v", err)
 		return "", err
 	}
 
 	if len(gptResponse.Choices) > 0 {
+		log.Printf("GPT API Response Choice: %+v", gptResponse.Choices[0].Message.Content)
 		return gptResponse.Choices[0].Message.Content, nil
 	}
 
+	log.Printf("No response from GPT API")
 	return "", fmt.Errorf("no response from GPT API")
 }
 
