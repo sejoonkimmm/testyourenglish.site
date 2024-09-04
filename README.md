@@ -15,12 +15,6 @@
       <br>Go
     </td>
     <td align="center" width="96">
-      <a href="https://aws.amazon.com/">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg" width="48" height="48" alt="AWS" />
-      </a>
-      <br>AWS
-    </td>
-    <td align="center" width="96">
       <a href="https://reactjs.org/">
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="48" height="48" alt="React" />
       </a>
