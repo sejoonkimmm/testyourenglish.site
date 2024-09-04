@@ -5,6 +5,8 @@
 
 🔗 [How to deploy your Static websites with AWS](https://github.com/sejoonkimmm/deploy_static_website_AWS)
 
+🔗 [Make serverless Architecture in Go + AWS Lambda](https://github.com/sejoonkimmm/testyourenglish.site/wiki/Make-serverless-architecture-with-AWS-Lambda)
+
 ## Tech Stack 🛠
 <table>
   <tr>
