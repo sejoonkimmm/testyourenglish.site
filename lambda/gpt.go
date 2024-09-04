@@ -8,8 +8,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 )
+
+type Topic struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
 
 type GPTRequest struct {
 	Model       string    `json:"model"`
@@ -105,7 +111,7 @@ func extractIELTS(feedback string) string {
 	return "N/A"
 }
 
-func CallGPTTopicAPI() (map[string]map[string]string, error) {
+func CallGPTTopicAPI() (map[string]Topic, error) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	url := "https://api.openai.com/v1/chat/completions"
 
@@ -152,18 +158,43 @@ func CallGPTTopicAPI() (map[string]map[string]string, error) {
 		log.Printf("Error unmarshaling GPT API response: %v", err)
 		return nil, err
 	}
-
 	if len(gptResponse.Choices) > 0 {
-		// Parsing GPT response directly as a JSON object
-		var topics map[string]map[string]string
-		err := json.Unmarshal([]byte(gptResponse.Choices[0].Message.Content), &topics)
-		if err != nil {
-			log.Printf("Error unmarshaling topics JSON: %v", err)
-			return nil, err
-		}
-		return topics, nil
+		content := gptResponse.Choices[0].Message.Content
+		return parseTopics(content)
 	}
 
 	log.Printf("No topics found in GPT API response")
 	return nil, fmt.Errorf("no response from GPT API")
+}
+
+func parseTopics(content string) (map[string]Topic, error) {
+	topics := make(map[string]Topic)
+
+	// Try parsing as JSON first
+	err := json.Unmarshal([]byte(content), &topics)
+	if err == nil {
+		return topics, nil
+	}
+
+	// If JSON parsing fails, try extracting topics manually
+	topicRegex := regexp.MustCompile(`(?i)Topic\s*(\d+):\s*(.+?)\s*Description:\s*(.+?)(?:\n|$)`)
+	matches := topicRegex.FindAllStringSubmatch(content, -1)
+
+	for _, match := range matches {
+		if len(match) == 4 {
+			topicNum := match[1]
+			title := strings.TrimSpace(match[2])
+			description := strings.TrimSpace(match[3])
+			topics[fmt.Sprintf("topic%s", topicNum)] = Topic{
+				Title:       title,
+				Description: description,
+			}
+		}
+	}
+
+	if len(topics) == 0 {
+		return nil, fmt.Errorf("failed to parse topics from GPT response")
+	}
+
+	return topics, nil
 }

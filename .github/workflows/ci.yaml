@@ -7,31 +7,31 @@ on:
       - main
 
 jobs:
-  frontend:
-    runs-on: ubuntu-latest
-    name: Build and Deploy Frontend
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+  # frontend:
+  #   runs-on: ubuntu-latest
+  #   name: Build and Deploy Frontend
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '16'
 
-      - name: Install dependencies
-        run: |
-          cd frontend
-          npm install
+  #     - name: Install dependencies
+  #       run: |
+  #         cd frontend
+  #         npm install
 
-      - name: Build Frontend
-        run: |
-          cd frontend
-          npm run build
+  #     - name: Build Frontend
+  #       run: |
+  #         cd frontend
+  #         npm run build
 
-      - name: Deploy Frontend
-        run: |
-          echo "Deploying frontend..."
+  #     - name: Deploy Frontend
+  #       run: |
+  #         echo "Deploying frontend..."
 
   lambda:
     runs-on: ubuntu-latest
