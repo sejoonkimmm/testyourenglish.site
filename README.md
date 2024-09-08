@@ -63,13 +63,13 @@
       <sub>Go Developer</sub>
     </td>
     <td align="center">
-      <a href="[https://github.com/clearsu](https://github.com/clearsu)">
-        <img src="https://github.com/clearsu.png" width="150px;" alt="Jincheol Park"/>
+      <a href="[https://github.com/KKWANH](https://github.com/KKWANH)">
+        <img src="https://github.com/KKWANH.png" width="150px;" alt="Kwanho Kim"/>
         <br />
-        <sub><b>Jincheol Park</b></sub>
+        <sub><b>Kwanho Kim</b></sub>
       </a>
       <br />
-      <a href="[https://github.com/clearsu](https://github.com/clearsu)"><img src="https://img.shields.io/badge/GitHub-clearsu-blue?logo=github" alt="GitHub Badge" /></a>
+      <a href="[https://github.com/KKWANH](https://github.com/KKWANH)"><img src="https://img.shields.io/badge/GitHub-KKWANH-blue?logo=github" alt="GitHub Badge" /></a>
       <br />
       <sub>Frontend Developer</sub>
       <br />
