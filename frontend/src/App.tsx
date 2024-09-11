@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
 import GlobalStyle from './styles/globalStyles';
 import { ThemeProvider } from './contexts/ThemeContext';
+
+import MainPage from './pages/MainPage';
 
 const App: React.FC = () => {
   return (
@@ -9,14 +12,7 @@ const App: React.FC = () => {
       <GlobalStyle />
       <BrowserRouter>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <div>
-                Hello World!
-              </div>
-            }
-          />
+          <Route path="/" element={<MainPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

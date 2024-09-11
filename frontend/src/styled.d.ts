@@ -6,14 +6,19 @@ declare module 'styled-components' {
       background: string;
       innerBackground: string;
       text: string;
-      _green: string;
-      _yellow: string;
-      _orange: string;
-      _red: string;
-      _warning_orange: string;
-      _warning_red: string;
       primary: string;
       secondary: string;
+      contentBackground: string;
+      panelBackground: string;
+    };
+    breakpoints: {
+      mobile: string;
+      desktop: string;
+    };
+    sizes: {
+      PanelDesktop: string;
+      PanelMobileMin: string;
+      PanelMobileMax: string;
     };
   }
 }
