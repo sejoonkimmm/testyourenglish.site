@@ -11,6 +11,15 @@ type Request struct {
 	Text string `json:"text"`
 }
 
+type GradingResponse struct {
+	CEFR         string `json:"cefr"`
+	IELTS        string `json:"ielts"`
+	Feedback     string `json:"feedback"`
+	Vocabulary   string `json:"vocabulary"`
+	Grammar      string `json:"grammar"`
+	Improvements string `json:"improvements"`
+}
+
 func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// 경로에 따라 다른 기능을 처리
 	switch request.Path {
