@@ -1,7 +1,3 @@
-# .gitignore
-./bootstrap
-./function.zip
-
 # Logs
 logs
 *.log

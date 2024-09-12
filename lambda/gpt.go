@@ -38,31 +38,39 @@ type GPTResponse struct {
 	} `json:"choices"`
 }
 
-func CallGPTGradingAPI(answer string) (map[string]string, error) {
+type GradingRequest struct {
+	Text  string `json:"text"`
+	Topic string `json:"topic"`
+}
+
+type GPTErrorResponse struct {
+	Error string `json:"error"`
+}
+
+func CallGPTGradingAPI(request GradingRequest) (map[string]string, error) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	url := "https://api.openai.com/v1/chat/completions"
 
 	requestBody := GPTRequest{
-		Model: "gpt-4o-mini",
+		Model: "gpt-4",
 		Messages: []Message{
-			{Role: "system", Content: `You are an English language proficiency evaluator. Assess the given answer, ensuring the proficiency level does not exceed CEFR B2-High or IELTS 7.0. Provide feedback in the following JSON format:
+			{Role: "system", Content: `You are an English language proficiency evaluator. Assess the given answer based on the provided topic. 
+			If the answer is off-topic, contains inappropriate content, or is impossible to grade, respond with only: {"error": "invalid_content"}.
+			Otherwise, provide feedback in the following JSON format:
 
-		{
-			"CEFR": "B1/B2/etc",
-			"IELTS": "5.5/6.0/etc",
-			"feedback": "Your detailed feedback here, including specific suggestions for improvement.",
-			"vocabulary": ["word1", "word2", "word3"],
-			"grammar": ["grammar point 1", "grammar point 2"],
-			"improvements": ["suggestion 1", "suggestion 2"]
-		}
+			{
+				"CEFR": "B1/B2/etc",
+				"IELTS": "5.5/6.0/etc",
+				"feedback": "Your detailed feedback here, including specific suggestions for improvement.",
+				"vocabulary": ["word1", "word2", "word3"],
+				"grammar": ["grammar point 1", "grammar point 2"],
+				"improvements": ["suggestion 1", "suggestion 2"]
+			}
 
-		Ensure that the CEFR level is one of: A1, A2, B1, B2 (not exceeding B2-High).
-		Ensure that the IELTS score is between 1.0 and 7.0 in 0.5 increments.
-		In the feedback, analyze used vocabulary, grammar mistakes, and provide improvement suggestions.
-		The vocabulary field should contain 3-5 words at B2-High level that could improve the answer.
-		The grammar field should list 2-3 grammar points that need improvement.
-		The improvements field should provide 2-3 specific suggestions to enhance the answer.`},
-			{Role: "user", Content: fmt.Sprintf("Answer: \"%s\"\n\nProvide the assessment in the specified JSON format.", answer)},
+			Ensure that the CEFR level is one of: A1, A2, B1, B2 (not exceeding B2-High).
+			Ensure that the IELTS score is between 1.0 and 7.0 in 0.5 increments.
+			Keep the feedback concise to save tokens.`},
+			{Role: "user", Content: fmt.Sprintf("Topic: %s\n\nAnswer: %s\n\nProvide the assessment in the specified JSON format.", request.Topic, request.Text)},
 		},
 		Temperature: 0.7,
 	}
@@ -104,7 +112,15 @@ func CallGPTGradingAPI(answer string) (map[string]string, error) {
 	}
 
 	if len(gptResponse.Choices) > 0 {
-		return parseStructuredResponse(gptResponse.Choices[0].Message.Content)
+		content := gptResponse.Choices[0].Message.Content
+
+		// Check for error response
+		var errorResp GPTErrorResponse
+		if err := json.Unmarshal([]byte(content), &errorResp); err == nil && errorResp.Error == "invalid_content" {
+			return nil, ErrInappropriateContent
+		}
+
+		return parseStructuredResponse(content)
 	}
 
 	return nil, fmt.Errorf("no response from GPT API")
