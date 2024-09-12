@@ -10,7 +10,9 @@ jobs:
   frontend:
     runs-on: ubuntu-latest
     name: Build and Deploy Frontend
-    if: contains(github.event.pull_request.files.*.path, 'frontend/')
+    if: |
+      contains(github.event.pull_request.files.*.path, 'frontend/') ||
+      contains(github.event.pull_request.files.*.path, 'frontend')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -45,7 +47,9 @@ jobs:
   lambda:
     runs-on: ubuntu-latest
     name: Build and Deploy Lambda
-    if: contains(github.event.pull_request.files.*.path, 'lambda/')
+    if: |
+      contains(github.event.pull_request.files.*.path, 'lambda/') ||
+      contains(github.event.pull_request.files.*.path, 'lambda')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
