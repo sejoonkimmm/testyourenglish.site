@@ -5,14 +5,17 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'frontend/**'
+      - 'lambda/**'
 
 jobs:
   frontend:
     runs-on: ubuntu-latest
     name: Build and Deploy Frontend
     if: |
-      contains(github.event.pull_request.files.*.path, 'frontend/**') ||
-      contains(github.event.pull_request.files.*.path, 'frontend')
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.files.*.path, 'frontend/')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -48,8 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Lambda
     if: |
-      contains(github.event.pull_request.files.*.path, 'lambda/**') ||
-      contains(github.event.pull_request.files.*.path, 'lambda')
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.files.*.path, 'lambda/')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
