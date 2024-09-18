@@ -16,7 +16,9 @@ declare module 'styled-components' {
       desktop: string;
     };
     sizes: {
+      ContentDesktop: string;
       PanelDesktop: string;
+      ContentMobile: string;
       PanelMobileMin: string;
       PanelMobileMax: string;
     };

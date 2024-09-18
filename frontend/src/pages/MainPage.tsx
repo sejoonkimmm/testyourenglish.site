@@ -13,9 +13,34 @@ const Wrapper = styled.div`
 
 const Content = styled.div`
   flex: 1;
-  padding: 10px 15px;
-  background-color: ${({ theme }) => theme.colors.contentBackground};
+  padding: 30px 15px;
+  text-align: center;
+
+  /* 배경 이미지 추가 및 투명도 적용 */
+  background-image: url('images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: ${({ theme }) => theme.sizes.ContentDesktop};
+  }
+
+  /* Mobile View */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: 100%;
+  }
 `;
+
+const fontTitleStyle = {
+  fontFamily: 'Ananda Black',
+  wordSpacing: '5px',
+}
+
+const fontLightStyle = {
+  fontWeight: '100',
+}
 
 const MainPage: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
@@ -30,8 +55,9 @@ const MainPage: React.FC = () => {
         <h1>Subject</h1>
       </Panel>
       <Content>
-        <h1>Subject</h1>
-        <p>Your essay subject will appear here.</p>
+        <h1 style={fontTitleStyle}>Test Your English!</h1>
+        <p style={fontLightStyle}>Your privite essay reviewer.</p>
+        <hr style={{width: '30%', marginTop: '20px'}} />
       </Content>
     </Wrapper>
   );
