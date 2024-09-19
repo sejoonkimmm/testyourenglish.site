@@ -7,11 +7,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "start": "vite",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write ./src"
   },
   "dependencies": {
+    "express": "^4.21.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.26.2",
