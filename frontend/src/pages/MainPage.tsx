@@ -21,7 +21,7 @@ const Content = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  
+
   /* Desktop View */
   @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
     max-width: ${({ theme }) => theme.sizes.ContentDesktop};
@@ -36,11 +36,11 @@ const Content = styled.div`
 const fontTitleStyle = {
   fontFamily: 'Ananda Black',
   wordSpacing: '5px',
-}
+};
 
 const fontLightStyle = {
   fontWeight: '100',
-}
+};
 
 const MainPage: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
@@ -57,7 +57,7 @@ const MainPage: React.FC = () => {
       <Content>
         <h1 style={fontTitleStyle}>Test Your English!</h1>
         <p style={fontLightStyle}>Your privite essay reviewer.</p>
-        <hr style={{width: '30%', marginTop: '20px'}} />
+        <hr style={{ width: '30%', marginTop: '20px' }} />
       </Content>
     </Wrapper>
   );
