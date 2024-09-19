@@ -15,7 +15,7 @@ const common = {
     PanelDesktop: 'calc(100vw - 430px)',
     ContentMobile: 'calc(100px)',
     PanelMobileMin: '100px',
-    PanelMobileMax: 'calc(100vh - 100px)',
+    PanelMobileMax: 'calc(100vh - 200px)',
   },
 };
 
@@ -64,3 +64,14 @@ export const slideOut = css`
     }
   }
 `;
+
+// --------------------------------------------------------------------
+
+export const fontTitleStyle = {
+  fontFamily: 'Ananda Black',
+  wordSpacing: '5px',
+};
+
+export const fontLightStyle = {
+  fontWeight: '100',
+};

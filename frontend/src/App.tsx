@@ -1,20 +1,63 @@
-import React from 'react';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
 import GlobalStyle from './styles/globalStyles';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { fontTitleStyle, fontLightStyle } from './styles/theme';
 
-import MainPage from './pages/MainPage';
+import { ThemeProvider } from './contexts/ThemeContext';
+import Panel from './components/Panel';
+
+const Wrapper = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  background-color: ${({ theme }) => theme.colors.background};
+  overflow: hidden;
+  transition: 0.3s;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  padding: 30px 15px;
+  text-align: center;
+
+  /* 배경 이미지 추가 및 투명도 적용 */
+  background-image: url('images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: ${({ theme }) => theme.sizes.ContentDesktop};
+  }
+
+  /* Mobile View */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: 100%;
+  }
+`;
 
 const App: React.FC = () => {
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+
+  const togglePanel = () => {
+    setIsPanelOpen(!isPanelOpen);
+  };
+
   return (
     <ThemeProvider>
       <GlobalStyle />
-      <HashRouter>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-        </Routes>
-      </HashRouter>
+      <Wrapper>
+        <Content>
+          <h1 style={fontTitleStyle}>Test Your English!</h1>
+          <p style={fontLightStyle}>Your privite essay reviewer.</p>
+          <hr style={{ width: '30%', marginTop: '20px' }} />
+        </Content>
+        <Panel isPanelOpen={isPanelOpen} togglePanel={togglePanel}>
+          <h1>Subject</h1>
+        </Panel>
+      </Wrapper>
     </ThemeProvider>
   );
 };
