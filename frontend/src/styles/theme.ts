@@ -15,7 +15,7 @@ const common = {
     PanelDesktop: 'calc(100vw - 430px)',
     ContentMobile: 'calc(100px)',
     PanelMobileMin: '100px',
-    PanelMobileMax: 'calc(100vh - 200px)',
+    PanelMobileMax: 'calc(100vh - 150px)',
   },
 };
 

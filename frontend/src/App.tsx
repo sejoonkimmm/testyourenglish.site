@@ -5,7 +5,11 @@ import GlobalStyle from './styles/globalStyles';
 import { fontTitleStyle, fontLightStyle } from './styles/theme';
 
 import { ThemeProvider } from './contexts/ThemeContext';
+import ArticleInterface from './interface/ArticleInterface';
+
 import Panel from './components/Panel';
+import articles from './articles/_articles';
+import ArticleList from './articles/ArticleList';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -18,10 +22,9 @@ const Wrapper = styled.div`
 
 const Content = styled.div`
   flex: 1;
-  padding: 30px 15px;
+  padding: 30px 20px;
   text-align: center;
 
-  /* 배경 이미지 추가 및 투명도 적용 */
   background-image: url('images/background.png');
   background-size: cover;
   background-position: center;
@@ -39,11 +42,13 @@ const Content = styled.div`
 `;
 
 const App: React.FC = () => {
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
   };
+
+  const articleList: ArticleInterface[] = articles;
 
   return (
     <ThemeProvider>
@@ -52,7 +57,8 @@ const App: React.FC = () => {
         <Content>
           <h1 style={fontTitleStyle}>Test Your English!</h1>
           <p style={fontLightStyle}>Your privite essay reviewer.</p>
-          <hr style={{ width: '30%', marginTop: '20px' }} />
+          <hr style={{ width: '30%', marginTop: '32px' }} />
+          <ArticleList articleList={articleList} />
         </Content>
         <Panel isPanelOpen={isPanelOpen} togglePanel={togglePanel}>
           <h1>Subject</h1>
