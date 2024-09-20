@@ -1,6 +1,7 @@
 import ArticleInterface from '../interface/ArticleInterface';
 
 const _writing_under_time_pressure: ArticleInterface = {
+  id: 'writing_under_time_pressure',
   icon: '⏰',
   title: 'Writing Under Time Pressure',
   date: '20.09.2024',

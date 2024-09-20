@@ -61,13 +61,14 @@ const ArticleDescription = styled.div`
   ${ArticleContentCommonStyle}
 `;
 
-const ArticleList: React.FC<{ articleList: ArticleInterface[] }> = ({
-  articleList,
-}) => {
+const ArticleList: React.FC<{
+  articleList: ArticleInterface[];
+  onArticleClick: (articleId: string) => void;
+}> = ({ articleList, onArticleClick }) => {
   return (
     <ArticleListWrapper>
       {articleList.map((article, index) => (
-        <ArticleItem key={index}>
+        <ArticleItem key={index} onClick={() => onArticleClick(article.id)}>
           <ArticleIcon>{article.icon}</ArticleIcon>
           <ArticleContent>
             <ArticleTitle>{article.title}</ArticleTitle>

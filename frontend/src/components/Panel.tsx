@@ -21,7 +21,7 @@ const PanelWrapper = styled.div<{ $isPanelOpen: boolean }>`
     top: 0;
     width: ${({ theme }) => theme.sizes.PanelDesktop};
     flex-direction: row;
-    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2); /* 왼쪽 그림자 추가 */
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
   }
 
   /* Mobile View */
@@ -41,7 +41,7 @@ const PanelWrapper = styled.div<{ $isPanelOpen: boolean }>`
         : css`
             ${slideOut} 0.3s ease-in-out
           `};
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2); /* 위쪽 그림자 추가 */
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -99,8 +99,8 @@ const Panel: React.FC<PanelProps> = ({
 }) => {
   return (
     <PanelWrapper $isPanelOpen={isPanelOpen}>
-      <PanelHeader>
-        <CloseButton onClick={togglePanel}>
+      <PanelHeader onClick={togglePanel}>
+        <CloseButton>
           <CloseLine>&nbsp;</CloseLine>
         </CloseButton>
       </PanelHeader>

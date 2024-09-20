@@ -1,6 +1,7 @@
 import ArticleInterface from '../interface/ArticleInterface';
 
 const _effective_use_of_transition_words: ArticleInterface = {
+  id: 'effective_use_of_transition_words',
   icon: '🏃️',
   title: 'Effective Use of Transition Words',
   date: '20.09.2024',

@@ -1,6 +1,7 @@
 import ArticleInterface from '../interface/ArticleInterface';
 
 const _enhancing_vocabulary_usage: ArticleInterface = {
+  id: 'enhancing_vocabulary_usage',
   icon: '📜',
   title: 'Enhancing Vocabulary Usage',
   date: '20.09.2024',

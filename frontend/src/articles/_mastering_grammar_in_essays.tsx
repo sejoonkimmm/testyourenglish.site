@@ -1,6 +1,7 @@
 import ArticleInterface from '../interface/ArticleInterface';
 
 const _mastering_grammar_in_essays: ArticleInterface = {
+  id: 'mastering_grammar_in_essays',
   icon: '♾️',
   title: 'Mastering Grammar in Essays',
   date: '20.09.2024',
