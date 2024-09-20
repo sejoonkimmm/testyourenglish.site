@@ -1,4 +1,4 @@
-import ArticleInterface from '../interface/ArticleInterface';
+import ArticleInterface from '../../interface/ArticleInterface';
 
 const _developing_a_unique_writing_style: ArticleInterface = {
   id: 'developing_a_unique_writing_style',

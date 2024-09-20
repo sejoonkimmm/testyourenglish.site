@@ -1,4 +1,4 @@
-import ArticleInterface from '../interface/ArticleInterface';
+import ArticleInterface from '../../interface/ArticleInterface';
 
 const _mastering_grammar_in_essays: ArticleInterface = {
   id: 'mastering_grammar_in_essays',

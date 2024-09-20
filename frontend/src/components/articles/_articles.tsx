@@ -1,4 +1,4 @@
-import ArticleInterface from '../interface/ArticleInterface';
+import ArticleInterface from '../../interface/ArticleInterface';
 
 import _building_strong_arguments from './_building_strong_arguments';
 import _developing_a_unique_writing_style from './_developing_a_unique_writing_style';

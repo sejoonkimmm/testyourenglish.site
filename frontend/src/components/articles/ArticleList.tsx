@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import ArticleInterface from '../interface/ArticleInterface';
+import ArticleInterface from '../../interface/ArticleInterface';
 
 const ArticleListWrapper = styled.div`
   display: flex;
@@ -8,13 +8,22 @@ const ArticleListWrapper = styled.div`
   width: 100%;
   margin: 0 auto;
   margin-top: 32px;
-  max-height: calc(100vh - 320px);
-  overflow-y: scroll;
 
+  overflow-y: scroll;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-height: calc(100vh - 20vh);
+  }
+
+  /* Mobile View */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-height: calc(100vh - 320px);
   }
 `;
 
@@ -37,14 +46,14 @@ const ArticleIcon = styled.div`
 const ArticleContent = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100% - 3rem - 16px); /* 아이콘 너비를 제외한 고정된 너비 설정 */
+  width: calc(100% - 3rem - 16px);
 `;
 
 const ArticleContentCommonStyle = css`
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  width: 100%; /* 고정된 width로 설정 */
+  width: 100%;
 `;
 
 const ArticleTitle = styled.div`

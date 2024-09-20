@@ -9,9 +9,12 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import ArticleInterface from './interface/ArticleInterface';
 
 import Panel from './components/Panel';
-import articles from './articles/_articles';
-import ArticleList from './articles/ArticleList';
-import ArticleDetail from './articles/ArticleDetail';
+import Review from './components/Review';
+import Subject from './components/Subject';
+import History from './components/History';
+import articles from './components/articles/_articles';
+import ArticleList from './components/articles/ArticleList';
+import ArticleDetail from './components/articles/ArticleDetail';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -80,7 +83,9 @@ const App: React.FC = () => {
         <Panel isPanelOpen={isPanelOpen} togglePanel={togglePanel}>
           <Routes>
             <Route path="/article/:articleId" element={<ArticleDetail />} />
-            <Route path="/" element={<h1>Subject</h1>} />
+            <Route path="/" element={<Subject />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/review/:reviewId" element={<Review />} />
           </Routes>
         </Panel>
       </Wrapper>

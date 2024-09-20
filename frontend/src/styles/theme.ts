@@ -3,8 +3,12 @@ import { css, DefaultTheme } from 'styled-components';
 const common = {
   colors: {
     background: '#212121',
-    secondary: '#545454',
     contentBackground: '#4B504A',
+    innerBackground: '#0E0E10',
+    text: '#E6E6F2',
+    primary: '#ffffff',
+    secondary: '#d1d1d1',
+    panelBackground: '#19181B',
   },
   breakpoints: {
     mobile: '768px',
@@ -19,26 +23,14 @@ const common = {
   },
 };
 
-export const darkTheme: DefaultTheme = {
-  colors: {
-    ...common.colors,
-    innerBackground: '#0E0E10',
-    text: '#E6E6F2',
-    primary: '#ffffff',
-    panelBackground: '#19181B',
-  },
+export const lightTheme: DefaultTheme = {
+  colors: common.colors,
   breakpoints: common.breakpoints,
   sizes: common.sizes,
 };
 
-export const lightTheme: DefaultTheme = {
-  colors: {
-    ...common.colors,
-    innerBackground: '#0E0E10',
-    text: '#E6E6F2',
-    primary: '#ffffff',
-    panelBackground: '#19181B',
-  },
+export const darkTheme: DefaultTheme = {
+  colors: common.colors,
   breakpoints: common.breakpoints,
   sizes: common.sizes,
 };

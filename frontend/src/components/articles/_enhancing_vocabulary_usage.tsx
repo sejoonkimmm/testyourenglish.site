@@ -1,4 +1,4 @@
-import ArticleInterface from '../interface/ArticleInterface';
+import ArticleInterface from '../../interface/ArticleInterface';
 
 const _enhancing_vocabulary_usage: ArticleInterface = {
   id: 'enhancing_vocabulary_usage',

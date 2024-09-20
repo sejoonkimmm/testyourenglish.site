@@ -1,4 +1,4 @@
-import ArticleInterface from '../interface/ArticleInterface';
+import ArticleInterface from '../../interface/ArticleInterface';
 
 const _the_power_of_concise_writing: ArticleInterface = {
   id: 'the_power_of_concise_writing',

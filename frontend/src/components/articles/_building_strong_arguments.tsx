@@ -1,4 +1,4 @@
-import ArticleInterface from '../interface/ArticleInterface';
+import ArticleInterface from '../../interface/ArticleInterface';
 
 const _building_strong_arguments: ArticleInterface = {
   id: 'building_strong_arguments',
