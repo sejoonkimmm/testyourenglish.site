@@ -17,7 +17,7 @@ const common = {
   sizes: {
     ContentDesktop: '430px',
     PanelDesktop: 'calc(100vw - 430px)',
-    ContentMobile: 'calc(100px)',
+    ContentMobile: '100px',
     PanelMobileMin: '100px',
     PanelMobileMax: 'calc(100vh - 150px)',
   },
@@ -62,6 +62,7 @@ export const slideOut = css`
 export const fontTitleStyle = {
   fontFamily: 'Ananda Black',
   wordSpacing: '5px',
+  cursor: 'pointer',
 };
 
 export const fontLightStyle = {

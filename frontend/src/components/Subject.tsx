@@ -1,58 +1,50 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 
-const PannelWrapper = styled.div`
-  height: 100%;
-`;
-
-const PanelHeader = styled.div`
-  height: 45px;
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background-color: ${({ theme }) => theme.colors.panelBackground};
-`;
-
-const PanelContent = styled.div`
-  height: calc(100% - 45px);
+const Wrapper = styled.div`
+  flex-grow: 1;
   padding: 20px;
   display: flex;
   flex-direction: column;
-`;
+  overflow-y: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 
-const Button = styled.button`
-  padding: 8px 16px;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: calc(100% - 80px); /* 고정된 높이 설정 */
+  }
+
+  /* Mobile View */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: calc(100% - 160px); /* 고정된 높이 설정 */
   }
 `;
 
 const SubjectText = styled.h2`
+  margin: 0;
   margin-bottom: 20px;
 `;
 
 const TextArea = styled.textarea<{ $isOverLimit: boolean }>`
   width: 100%;
-  height: calc(100vh - 400px); /* 제출 버튼과 팁에 맞춰 높이를 조정 */
+  min-height: calc(100vh - 400px);
   padding: 10px;
   border-radius: 4px;
   background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.primary};
   resize: none;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   border: ${({ $isOverLimit }) =>
     $isOverLimit
       ? '2px solid red'
       : '1px solid ${({ theme }) => theme.colors.text}'};
 `;
 
-const LetterCount = styled.p<{ $isOverLimit: boolean }>`
+const WordCount = styled.p<{ $isOverLimit: boolean }>`
   color: ${({ $isOverLimit, theme }) =>
     $isOverLimit ? 'red' : theme.colors.text};
   font-size: 1.3rem;
@@ -61,13 +53,20 @@ const LetterCount = styled.p<{ $isOverLimit: boolean }>`
 `;
 
 const Tip = styled.p`
-  margin-top: 0.5rem;
+  margin: 0;
   font-size: 1.3rem;
   font-weight: 100;
   color: ${({ theme }) => theme.colors.secondary};
 `;
 
-const SubmitButton = styled(Button)`
+const SubmitButton = styled.button`
+  background: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1.5rem;
+  font-weight: 800;
   width: 20%;
   font-size: 1.5rem;
   font-weight: 600;
@@ -77,21 +76,16 @@ const SubmitButton = styled(Button)`
   background: ${({ theme }) => theme.colors.background};
 `;
 
-const MAX_LETTERS = 500; // 문자 수 제한
+const MAX_LETTERS = 2500;
+const MAX_WORDS = 250;
+const MIN_WORDS = 150;
 
 const Subject: React.FC = () => {
   const [essayText, setEssayText] = useState('');
-  const navigate = useNavigate();
-  const letterCount = essayText.length; // 문자 수 계산
-  const isOverLimit = letterCount > MAX_LETTERS; // 문자 수 제한 체크
-
-  const handleSubjectClick = () => {
-    navigate('/');
-  };
-
-  const handleHistoryClick = () => {
-    navigate('/history');
-  };
+  const wordCount = essayText.split(' ').filter((word) => word).length;
+  const isOverLetterLimit = essayText.length > MAX_LETTERS;
+  const isOverLimit = wordCount > MAX_WORDS;
+  const isLessLimit = wordCount < MIN_WORDS;
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEssayText(e.target.value);
@@ -99,31 +93,27 @@ const Subject: React.FC = () => {
 
   const handleSubmit = () => {
     // 제출 로직 (서버로 전송 등)
-    console.log('Essay Submitted:', essayText);
+    if (!isLessLimit && !isOverLimit && !isOverLetterLimit)
+      console.log('Essay Submitted:', essayText);
+    else console.log('Check Letter Length. Too less or Too much:', essayText);
   };
 
   return (
-    <PannelWrapper>
-      <PanelHeader>
-        <Button onClick={handleSubjectClick}>Subject</Button>
-        <Button onClick={handleHistoryClick}>History</Button>
-      </PanelHeader>
-      <PanelContent>
-        <SubjectText>
-          Write an essay about the "The Impact of Technology on Education".
-        </SubjectText>
-        <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
-        <LetterCount $isOverLimit={isOverLimit}>
-          {letterCount}/{MAX_LETTERS} letters
-        </LetterCount>
-        <TextArea
-          value={essayText}
-          onChange={handleTextChange}
-          $isOverLimit={isOverLimit}
-        />
-        <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
-      </PanelContent>
-    </PannelWrapper>
+    <Wrapper>
+      <SubjectText>
+        Write an essay about the "The Impact of Technology on Education".
+      </SubjectText>
+      <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
+      <WordCount $isOverLimit={isOverLimit}>
+        {wordCount}/{MAX_WORDS} words
+      </WordCount>
+      <TextArea
+        value={essayText}
+        onChange={handleTextChange}
+        $isOverLimit={isOverLimit}
+      />
+      <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
+    </Wrapper>
   );
 };
 

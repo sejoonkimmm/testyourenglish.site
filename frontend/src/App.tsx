@@ -51,6 +51,12 @@ const App: React.FC = () => {
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
   };
+  const setPanelOn = () => {
+    setIsPanelOpen(true);
+  };
+  const setPanelOff = () => {
+    setIsPanelOpen(false);
+  };
 
   // Router Control
   const navigate = useNavigate();
@@ -80,7 +86,12 @@ const App: React.FC = () => {
             onArticleClick={handleArticleClick}
           />
         </Content>
-        <Panel isPanelOpen={isPanelOpen} togglePanel={togglePanel}>
+        <Panel
+          isPanelOpen={isPanelOpen}
+          togglePanel={togglePanel}
+          setPanelOn={setPanelOn}
+          setPanelOff={setPanelOff}
+        >
           <Routes>
             <Route path="/article/:articleId" element={<ArticleDetail />} />
             <Route path="/" element={<Subject />} />
