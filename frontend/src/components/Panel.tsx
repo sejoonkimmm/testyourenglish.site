@@ -151,7 +151,7 @@ const Panel: React.FC<PanelProps> = ({
   isPanelOpen,
   togglePanel,
   setPanelOn,
-  setPanelOff,
+  // setPanelOff,
   children,
 }) => {
   const navigate = useNavigate();
