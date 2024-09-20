@@ -57,10 +57,7 @@ const PanelHeader = styled.div`
 
   /* Desktop View */
   @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 1px;
-    height: 100vh;
-    flex-direction: column; /* vertical */
-    padding: 10px;
+    display: none;
   }
 `;
 
@@ -68,7 +65,7 @@ const PanelContent = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100% - 27px);
 `;
 
 const CloseButton = styled.button`
@@ -94,7 +91,7 @@ const CloseLine = styled.div`
 `;
 
 const PanelContentWrapper = styled.div`
-  padding: 0;
+  padding: 0 20px;
   overflow-x: hidden;
   overflow-y: scroll;
   -ms-overflow-style: none; /* IE and Edge */
@@ -105,14 +102,9 @@ const PanelContentWrapper = styled.div`
 
   /* Desktop View */
   @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    height: 100%;
-    width: calc(100% - 1px);
-  }
-
-  /* Desktop View */
-  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    height: 100%;
-    width: calc(100% - 1px);
+    height: 100vh;
+    width: 100%;
+    padding: 60px 20px;
   }
 `;
 
@@ -152,6 +144,7 @@ const Button = styled.button`
   border-radius: 4px;
   font-size: 1.5rem;
   font-weight: 800;
+  padding: 0;
 `;
 
 const Panel: React.FC<PanelProps> = ({
