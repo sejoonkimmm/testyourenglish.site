@@ -1,10 +1,13 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { slideIn, slideOut } from '../styles/theme';
+import { useNavigate } from 'react-router-dom';
 
 interface PanelProps {
   isPanelOpen: boolean;
   togglePanel: () => void;
+  setPanelOn: () => void;
+  setPanelOff: () => void;
   children: React.ReactNode;
 }
 
@@ -52,6 +55,7 @@ const PanelHeader = styled.div`
   align-items: center;
   padding: 10px 0;
 
+  /* Desktop View */
   @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
     width: 1px;
     height: 100vh;
@@ -65,6 +69,7 @@ const PanelContent = styled.div`
   padding: 10px 15px;
   display: block;
 
+  /* Desktop View */
   @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
     flex: 1;
   }
@@ -92,11 +97,64 @@ const CloseLine = styled.div`
   border-radius: 5px;
 `;
 
+const PanelContentWrapper = styled.div`
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: 100%;
+    width: calc(100% - 1px);
+  }
+
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: 100%;
+    width: calc(100% - 1px);
+  }
+`;
+
+const PanelContentHeaderWrapper = styled.div`
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 10px;
+  background-color: ${({ theme }) => theme.colors.panelBackground};
+`;
+
+const Button = styled.button`
+  background: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1.5rem;
+  font-weight: 800;
+`;
+
 const Panel: React.FC<PanelProps> = ({
   isPanelOpen,
   togglePanel,
+  setPanelOn,
+  setPanelOff,
   children,
 }) => {
+  const navigate = useNavigate();
+  const handleSubjectClick = () => {
+    setPanelOn();
+    navigate('/');
+  };
+  const handleHistoryClick = () => {
+    setPanelOn();
+    navigate('/history');
+  };
+
   return (
     <PanelWrapper $isPanelOpen={isPanelOpen}>
       <PanelHeader onClick={togglePanel}>
@@ -104,7 +162,15 @@ const Panel: React.FC<PanelProps> = ({
           <CloseLine>&nbsp;</CloseLine>
         </CloseButton>
       </PanelHeader>
-      <PanelContent>{children}</PanelContent>
+      <PanelContent>
+        <PanelContentWrapper>
+          <PanelContentHeaderWrapper>
+            <Button onClick={handleSubjectClick}>Subject</Button>
+            <Button onClick={handleHistoryClick}>History</Button>
+          </PanelContentHeaderWrapper>
+          {children}
+        </PanelContentWrapper>
+      </PanelContent>
     </PanelWrapper>
   );
 };

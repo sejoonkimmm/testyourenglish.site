@@ -62,6 +62,7 @@ export const slideOut = css`
 export const fontTitleStyle = {
   fontFamily: 'Ananda Black',
   wordSpacing: '5px',
+  cursor: 'pointer',
 };
 
 export const fontLightStyle = {
