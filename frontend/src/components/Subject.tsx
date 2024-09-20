@@ -2,25 +2,42 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  height: calc(100% - 100px);
+  flex-grow: 1;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: calc(100% - 80px); /* 고정된 높이 설정 */
+  }
+
+  /* Mobile View */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: calc(100% - 160px); /* 고정된 높이 설정 */
+  }
 `;
 
 const SubjectText = styled.h2`
-  margin: 20px 0;
+  margin: 0;
+  margin-bottom: 20px;
 `;
 
 const TextArea = styled.textarea<{ $isOverLimit: boolean }>`
   width: 100%;
-  height: calc(100vh - 400px);
+  min-height: calc(100vh - 400px);
   padding: 10px;
   border-radius: 4px;
   background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.primary};
   resize: none;
-  font-size: 2rem;
+  font-size: 1.2rem;
   border: ${({ $isOverLimit }) =>
     $isOverLimit
       ? '2px solid red'

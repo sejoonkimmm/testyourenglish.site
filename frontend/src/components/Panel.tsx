@@ -65,14 +65,10 @@ const PanelHeader = styled.div`
 `;
 
 const PanelContent = styled.div`
-  flex: 1;
-  padding: 10px 15px;
-  display: block;
-
-  /* Desktop View */
-  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex: 1;
-  }
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 `;
 
 const CloseButton = styled.button`
@@ -123,9 +119,29 @@ const PanelContentWrapper = styled.div`
 const PanelContentHeaderWrapper = styled.div`
   height: 80px;
   display: flex;
-  justify-content: space-between;
   padding: 20px 10px;
   background-color: ${({ theme }) => theme.colors.panelBackground};
+
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    justify-content: left;
+    gap: 15px;
+  }
+
+  /* Mobile View */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    justify-content: space-between;
+  }
+`;
+
+const Hr = styled.hr`
+  width: 70%;
+  margin: 0 auto;
+
+  /* Desktop View */
+  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: none;
+  }
 `;
 
 const Button = styled.button`
@@ -146,6 +162,7 @@ const Panel: React.FC<PanelProps> = ({
   children,
 }) => {
   const navigate = useNavigate();
+  const isArticleRoute = location.pathname.startsWith('/article');
   const handleSubjectClick = () => {
     setPanelOn();
     navigate('/');
@@ -164,10 +181,15 @@ const Panel: React.FC<PanelProps> = ({
       </PanelHeader>
       <PanelContent>
         <PanelContentWrapper>
-          <PanelContentHeaderWrapper>
-            <Button onClick={handleSubjectClick}>Subject</Button>
-            <Button onClick={handleHistoryClick}>History</Button>
-          </PanelContentHeaderWrapper>
+          {!isArticleRoute && (
+            <>
+              <PanelContentHeaderWrapper>
+                <Button onClick={handleSubjectClick}>Subject</Button>
+                <Button onClick={handleHistoryClick}>History</Button>
+              </PanelContentHeaderWrapper>
+              <Hr />
+            </>
+          )}
           {children}
         </PanelContentWrapper>
       </PanelContent>
