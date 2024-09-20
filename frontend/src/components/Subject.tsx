@@ -24,9 +24,34 @@ const Wrapper = styled.div`
   }
 `;
 
-const SubjectText = styled.h2`
+const SubjectInfo = styled.div`
   margin: 0;
-  margin-bottom: 20px;
+  font-size: 1.3rem;
+  font-weight: 300;
+`;
+
+const SubjectText = styled.div`
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 10px 0 0 0;
+`;
+
+const BeforeTextArea = styled.div``;
+
+const LastUpdated = styled.div`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 1.3rem;
+  font-weight: 100;
+  text-align: left;
+`;
+
+const WordCount = styled.div<{ $isOverLimit: boolean }>`
+  color: ${({ $isOverLimit, theme }) =>
+    $isOverLimit ? 'red' : theme.colors.text};
+  font-size: 1.3rem;
+  font-weight: 100;
+  text-align: right;
 `;
 
 const TextArea = styled.textarea<{ $isOverLimit: boolean }>`
@@ -44,19 +69,12 @@ const TextArea = styled.textarea<{ $isOverLimit: boolean }>`
       : '1px solid ${({ theme }) => theme.colors.text}'};
 `;
 
-const WordCount = styled.p<{ $isOverLimit: boolean }>`
-  color: ${({ $isOverLimit, theme }) =>
-    $isOverLimit ? 'red' : theme.colors.text};
-  font-size: 1.3rem;
-  font-weight: 100;
-  text-align: right;
-`;
-
 const Tip = styled.p`
   margin: 0;
   font-size: 1.3rem;
   font-weight: 100;
   color: ${({ theme }) => theme.colors.secondary};
+  margin-top: 5px;
 `;
 
 const SubmitButton = styled.button`
@@ -81,7 +99,12 @@ const MAX_WORDS = 250;
 const MIN_WORDS = 150;
 
 const Subject: React.FC = () => {
-  const [essayText, setEssayText] = useState('');
+  const [essayText, setEssayText] = useState<string>('');
+  const [essaySubject, setEssaySubject] = useState<string>(
+    'The Impact of Technology on Education'
+  );
+  const [essayUpdated, setEssayUpdated] = useState<string>('10 min ago');
+
   const wordCount = essayText.split(' ').filter((word) => word).length;
   const isOverLetterLimit = essayText.length > MAX_LETTERS;
   const isOverLimit = wordCount > MAX_WORDS;
@@ -100,18 +123,20 @@ const Subject: React.FC = () => {
 
   return (
     <Wrapper>
-      <SubjectText>
-        Write an essay about the "The Impact of Technology on Education".
-      </SubjectText>
-      <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
-      <WordCount $isOverLimit={isOverLimit}>
-        {wordCount}/{MAX_WORDS} words
-      </WordCount>
+      <SubjectInfo>Write an essay about the subject below.</SubjectInfo>
+      <SubjectText>{essaySubject}</SubjectText>
+      <BeforeTextArea>
+        <LastUpdated>{essayUpdated}</LastUpdated>
+        <WordCount $isOverLimit={isOverLimit}>
+          {wordCount}/{MAX_WORDS} words
+        </WordCount>
+      </BeforeTextArea>
       <TextArea
         value={essayText}
         onChange={handleTextChange}
         $isOverLimit={isOverLimit}
       />
+      <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
       <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
     </Wrapper>
   );
