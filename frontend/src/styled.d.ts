@@ -11,7 +11,7 @@ declare module 'styled-components' {
       contentBackground: string;
       panelBackground: string;
     };
-    breakpoints: {
+    60pxbreakpoints: {
       mobile: string;
       desktop: string;
     };
