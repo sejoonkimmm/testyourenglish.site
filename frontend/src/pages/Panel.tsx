@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 import { BookHeart } from 'styled-icons/boxicons-solid';
 import { History } from 'styled-icons/remix-fill/';
 
-
 import { slideIn, slideOut } from '../styles/theme';
 
 import NavigatorButton from '../components/NavigatorButton';
@@ -143,17 +142,6 @@ const Hr = styled.hr`
   }
 `;
 
-const Button = styled.button`
-  background: none;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 1.5rem;
-  font-weight: 800;
-  padding: 0;
-`;
-
 const Panel: React.FC<PanelProps> = ({
   isPanelOpen,
   togglePanel,
@@ -184,8 +172,16 @@ const Panel: React.FC<PanelProps> = ({
           {!isArticleRoute && (
             <>
               <PanelContentHeaderWrapper>
-                <NavigatorButton icon={BookHeart} text="Subject" onClickHandler={handleSubjectClick}/>
-                <NavigatorButton icon={History} text="History" onClickHandler={handleHistoryClick}/>
+                <NavigatorButton
+                  icon={BookHeart}
+                  text="Subject"
+                  onClickHandler={handleSubjectClick}
+                />
+                <NavigatorButton
+                  icon={History}
+                  text="History"
+                  onClickHandler={handleHistoryClick}
+                />
               </PanelContentHeaderWrapper>
               <Hr />
             </>

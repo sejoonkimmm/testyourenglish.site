@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import NavigatorButtonInterface from "../interface/NavigatorButtonInterface";
+import styled from 'styled-components';
+import NavigatorButtonInterface from '../interface/NavigatorButtonInterface';
 
 const Wrapper = styled.button`
   background: none;
@@ -17,23 +17,21 @@ const IconWrapper = styled.div`
   margin-right: 8px;
 `;
 
-const Text = styled.div`
-
-`;
+const Text = styled.div``;
 
 const NavigatorButton: React.FC<NavigatorButtonInterface> = ({
   icon: Icon,
   text,
-  onClickHandler
+  onClickHandler,
 }) => {
   return (
     <Wrapper onClick={onClickHandler}>
       <IconWrapper>
-        <Icon size={24} />  {/* icon을 JSX 컴포넌트로 렌더링 */}
+        <Icon size={24} /> {/* icon을 JSX 컴포넌트로 렌더링 */}
       </IconWrapper>
       <Text>{text}</Text>
     </Wrapper>
-  )
-}
+  );
+};
 
 export default NavigatorButton;

@@ -94,10 +94,8 @@ const MAX_WORDS = 250;
 const MIN_WORDS = 150;
 
 const Subject: React.FC = () => {
-  const [essayText, setEssayText] = useState<string>('');
-  const [essaySubject, setEssaySubject] = useState<string>(
-    'The Impact of Technology on Education'
-  );
+  const [essayText, setEssayText] = useState<string>('Write your essay here.');
+  const [essaySubject, setEssaySubject] = useState<string>('');
 
   const wordCount = essayText.split(' ').filter((word) => word).length;
   const isOverLetterLimit = essayText.length > MAX_LETTERS;
@@ -106,7 +104,9 @@ const Subject: React.FC = () => {
 
   const updateSubject = (subject: string) => {
     setEssaySubject(subject);
-  }
+  };
+
+  updateSubject('The Impact of Technology on Education');
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEssayText(e.target.value);
