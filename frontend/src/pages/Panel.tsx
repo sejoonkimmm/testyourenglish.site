@@ -1,7 +1,13 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { slideIn, slideOut } from '../styles/theme';
 import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+
+import { BookHeart } from 'styled-icons/boxicons-solid';
+import { History } from 'styled-icons/remix-fill/';
+
+import { slideIn, slideOut } from '../styles/theme';
+
+import NavigatorButton from '../components/NavigatorButton';
 
 interface PanelProps {
   isPanelOpen: boolean;
@@ -104,7 +110,7 @@ const PanelContentWrapper = styled.div`
   @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
     height: 100vh;
     width: 100%;
-    padding: 60px 20px;
+    padding: 20px;
   }
 `;
 
@@ -136,22 +142,11 @@ const Hr = styled.hr`
   }
 `;
 
-const Button = styled.button`
-  background: none;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 1.5rem;
-  font-weight: 800;
-  padding: 0;
-`;
-
 const Panel: React.FC<PanelProps> = ({
   isPanelOpen,
   togglePanel,
   setPanelOn,
-  setPanelOff,
+  // setPanelOff,
   children,
 }) => {
   const navigate = useNavigate();
@@ -177,8 +172,16 @@ const Panel: React.FC<PanelProps> = ({
           {!isArticleRoute && (
             <>
               <PanelContentHeaderWrapper>
-                <Button onClick={handleSubjectClick}>Subject</Button>
-                <Button onClick={handleHistoryClick}>History</Button>
+                <NavigatorButton
+                  icon={BookHeart}
+                  text="Subject"
+                  onClickHandler={handleSubjectClick}
+                />
+                <NavigatorButton
+                  icon={History}
+                  text="History"
+                  onClickHandler={handleHistoryClick}
+                />
               </PanelContentHeaderWrapper>
               <Hr />
             </>

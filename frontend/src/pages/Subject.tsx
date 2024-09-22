@@ -24,9 +24,29 @@ const Wrapper = styled.div`
   }
 `;
 
-const SubjectText = styled.h2`
+const SubjectInfo = styled.div`
   margin: 0;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  font-weight: 300;
+`;
+
+const SubjectText = styled.div`
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 15px 0;
+`;
+
+const BeforeTextArea = styled.div``;
+
+const WordCount = styled.div<{ $isOverLimit: boolean }>`
+  color: ${({ $isOverLimit, theme }) =>
+    $isOverLimit ? 'red' : theme.colors.text};
+  font-size: 1rem;
+  font-weight: 100;
+  text-align: right;
+  margin-bottom: 5px;
 `;
 
 const TextArea = styled.textarea<{ $isOverLimit: boolean }>`
@@ -44,19 +64,12 @@ const TextArea = styled.textarea<{ $isOverLimit: boolean }>`
       : '1px solid ${({ theme }) => theme.colors.text}'};
 `;
 
-const WordCount = styled.p<{ $isOverLimit: boolean }>`
-  color: ${({ $isOverLimit, theme }) =>
-    $isOverLimit ? 'red' : theme.colors.text};
-  font-size: 1.3rem;
-  font-weight: 100;
-  text-align: right;
-`;
-
 const Tip = styled.p`
   margin: 0;
   font-size: 1.3rem;
   font-weight: 100;
   color: ${({ theme }) => theme.colors.secondary};
+  margin-top: 5px;
 `;
 
 const SubmitButton = styled.button`
@@ -81,11 +94,19 @@ const MAX_WORDS = 250;
 const MIN_WORDS = 150;
 
 const Subject: React.FC = () => {
-  const [essayText, setEssayText] = useState('');
+  const [essayText, setEssayText] = useState<string>('Write your essay here.');
+  const [essaySubject, setEssaySubject] = useState<string>('');
+
   const wordCount = essayText.split(' ').filter((word) => word).length;
   const isOverLetterLimit = essayText.length > MAX_LETTERS;
   const isOverLimit = wordCount > MAX_WORDS;
   const isLessLimit = wordCount < MIN_WORDS;
+
+  const updateSubject = (subject: string) => {
+    setEssaySubject(subject);
+  };
+
+  updateSubject('The Impact of Technology on Education');
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEssayText(e.target.value);
@@ -94,24 +115,25 @@ const Subject: React.FC = () => {
   const handleSubmit = () => {
     // 제출 로직 (서버로 전송 등)
     if (!isLessLimit && !isOverLimit && !isOverLetterLimit)
-      console.log('Essay Submitted:', essayText);
+      console.log('Essay Submitted:', essaySubject, essayText);
     else console.log('Check Letter Length. Too less or Too much:', essayText);
   };
 
   return (
     <Wrapper>
-      <SubjectText>
-        Write an essay about the "The Impact of Technology on Education".
-      </SubjectText>
-      <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
-      <WordCount $isOverLimit={isOverLimit}>
-        {wordCount}/{MAX_WORDS} words
-      </WordCount>
+      <SubjectInfo>Write an essay about the subject below.</SubjectInfo>
+      <SubjectText>{essaySubject}</SubjectText>
+      <BeforeTextArea>
+        <WordCount $isOverLimit={isOverLimit}>
+          {wordCount}/{MAX_WORDS} words
+        </WordCount>
+      </BeforeTextArea>
       <TextArea
         value={essayText}
         onChange={handleTextChange}
         $isOverLimit={isOverLimit}
       />
+      <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
       <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
     </Wrapper>
   );

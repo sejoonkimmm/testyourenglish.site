@@ -8,7 +8,7 @@ const ArticleWrapper = styled.div`
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
-  padding: 0;
+  padding: 20px 0;
 `;
 
 const ArticleHeader = styled.div`

@@ -8,13 +8,13 @@ import { fontTitleStyle, fontLightStyle } from './styles/theme';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ArticleInterface from './interface/ArticleInterface';
 
-import Panel from './components/Panel';
-import Review from './components/Review';
-import Subject from './components/Subject';
-import History from './components/History';
-import articles from './components/articles/_articles';
-import ArticleList from './components/articles/ArticleList';
-import ArticleDetail from './components/articles/ArticleDetail';
+import Panel from './pages/Panel';
+import Review from './pages/Review';
+import Subject from './pages/Subject';
+import History from './pages/History';
+import articles from './pages/articles/_articles';
+import ArticleList from './pages/articles/ArticleList';
+import ArticleDetail from './pages/articles/ArticleDetail';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -23,7 +23,7 @@ const Wrapper = styled.div`
   overflow: hidden;
   transition: 0.3s;
 
-  background-image: url('/images/background.png');
+  background-image: url('/background.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
