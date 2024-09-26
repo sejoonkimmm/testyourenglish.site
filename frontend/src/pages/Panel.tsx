@@ -1,19 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { BookHeart } from 'styled-icons/boxicons-solid';
-import { History } from 'styled-icons/remix-fill/';
-
 import { slideIn, slideOut } from '../styles/theme';
-
-import NavigatorButton from '../components/NavigatorButton';
 
 interface PanelProps {
   isPanelOpen: boolean;
   togglePanel: () => void;
-  setPanelOn: () => void;
-  setPanelOff: () => void;
   children: React.ReactNode;
 }
 
@@ -114,52 +106,11 @@ const PanelContentWrapper = styled.div`
   }
 `;
 
-const PanelContentHeaderWrapper = styled.div`
-  height: 80px;
-  display: flex;
-  padding: 20px 10px;
-  background-color: ${({ theme }) => theme.colors.panelBackground};
-
-  /* Desktop View */
-  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    justify-content: left;
-    gap: 15px;
-  }
-
-  /* Mobile View */
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    justify-content: space-between;
-  }
-`;
-
-const Hr = styled.hr`
-  width: 70%;
-  margin: 0 auto;
-
-  /* Desktop View */
-  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    display: none;
-  }
-`;
-
 const Panel: React.FC<PanelProps> = ({
   isPanelOpen,
   togglePanel,
-  setPanelOn,
-  // setPanelOff,
   children,
 }) => {
-  const navigate = useNavigate();
-  const isArticleRoute = location.pathname.startsWith('/article');
-  const handleSubjectClick = () => {
-    setPanelOn();
-    navigate('/');
-  };
-  const handleHistoryClick = () => {
-    setPanelOn();
-    navigate('/history');
-  };
-
   return (
     <PanelWrapper $isPanelOpen={isPanelOpen}>
       <PanelHeader onClick={togglePanel}>
@@ -169,23 +120,6 @@ const Panel: React.FC<PanelProps> = ({
       </PanelHeader>
       <PanelContent>
         <PanelContentWrapper>
-          {!isArticleRoute && (
-            <>
-              <PanelContentHeaderWrapper>
-                <NavigatorButton
-                  icon={BookHeart}
-                  text="Subject"
-                  onClickHandler={handleSubjectClick}
-                />
-                <NavigatorButton
-                  icon={History}
-                  text="History"
-                  onClickHandler={handleHistoryClick}
-                />
-              </PanelContentHeaderWrapper>
-              <Hr />
-            </>
-          )}
           {children}
         </PanelContentWrapper>
       </PanelContent>

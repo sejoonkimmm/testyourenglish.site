@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+// ---------------------------––----------------------------------------------
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import TopicInterface from '../interface/TopicInterface';
+
+// ---------------------------––----------------------------------------------
 const Wrapper = styled.div`
   flex-grow: 1;
   padding: 20px;
@@ -89,54 +93,152 @@ const SubmitButton = styled.button`
   background: ${({ theme }) => theme.colors.background};
 `;
 
+const FeedbackMessage = styled.p`
+  font-size: 1.2rem;
+  color: ${({ theme }) => theme.colors.primary};
+  margin-top: 20px;
+`;
+
+const MIN_LETTERS = 1000;
 const MAX_LETTERS = 2500;
 const MAX_WORDS = 250;
-const MIN_WORDS = 150;
 
 const Subject: React.FC = () => {
-  const [essayText, setEssayText] = useState<string>('Write your essay here.');
-  const [essaySubject, setEssaySubject] = useState<string>('');
-
-  const wordCount = essayText.split(' ').filter((word) => word).length;
-  const isOverLetterLimit = essayText.length > MAX_LETTERS;
+  // ---------------------------––----------------------------------------------
+  // Text
+  const [text, setText] = useState<string>('Write your essay here.');
+  const wordCount = text.split(' ').filter((word) => word).length;
+  const isToLess = text.length > MIN_LETTERS;
+  const isOverLetterLimit = text.length > MAX_LETTERS;
   const isOverLimit = wordCount > MAX_WORDS;
-  const isLessLimit = wordCount < MIN_WORDS;
-
-  const updateSubject = (subject: string) => {
-    setEssaySubject(subject);
-  };
-
-  updateSubject('The Impact of Technology on Education');
-
+  
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setEssayText(e.target.value);
+    setText(e.target.value);
+  };
+  
+  // ---------------------------––----------------------------------------------
+  // Topic
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [topic, setTopic] = useState<TopicInterface>({
+    title: 'Descriptive Writing',
+    description: 'Write a detailed description of your favorite place, including sensory details that evoke sights, sounds, smells, tastes, and textures.'
+  });
+  useEffect(() => {
+    const fetchTopics = async () => {
+      try {
+        const response = await fetch('https://we6jyg97u7.execute-api.eu-central-1.amazonaws.com/prod/topics');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        // Object에서 각 topic들을 배열로 변환
+        const topics: TopicInterface[] = Object.values(data);
+
+        // 랜덤하게 하나의 topic 선택
+        const index: number = Math.floor(Math.random() * topics.length);
+        const randomTopic: TopicInterface = {
+          title: topics[index].title,
+          description: topics[index].description,
+        };
+
+        setTopic(randomTopic);
+      } catch (error) {
+        setError('Failed to fetch topics. Please check the console error and try again later.');
+        console.error('Error fetching topics:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTopics();
+  }, []);
+
+
+  // ---------------------------––----------------------------------------------
+  // Submit
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // 제출 중 상태
+  const [feedback, setFeedback] = useState<string | null>(null); // 서버 응답 메시지
+  const [canSubmit, setCanSubmit] = useState<boolean>(true); // 제출 가능 여부
+  const handleSubmit = async () => {
+    if (!canSubmit || isOverLimit || isOverLetterLimit || !isToLess) {
+      if (!canSubmit) {
+        setFeedback('You can submit again after 5 minutes.');
+      } else {
+        setFeedback('Check Letter Length. 1000 ~ 2500 letter allowed.');
+      }
+      return;
+    }
+
+    setIsSubmitting(true); // 제출 중으로 설정
+    setCanSubmit(false); // 제출 비활성화
+
+    try {
+      const response = await fetch('https://we6jyg97u7.execute-api.eu-central-1.amazonaws.com/prod/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: topic.title,
+          text: text,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Submission failed. Check the request.');
+      }
+
+      const result = await response.json();
+      setFeedback(`Submission successful: ${result.CEFR}, ${result.IELTS}, ${result.feedback}`);
+      
+      // 5분 후 다시 제출 가능하게 설정
+      setTimeout(() => {
+        setCanSubmit(true);
+        setFeedback(null); // 메시지 초기화
+      }, 5 * 60 * 1000); // 5분 = 300000ms
+
+    } catch (error) {
+      setFeedback('Failed to submit the essay. Please try again.');
+      console.error('Error submitting essay:', error);
+    } finally {
+      setIsSubmitting(false); // 제출 중 상태 해제
+    }
   };
 
-  const handleSubmit = () => {
-    // 제출 로직 (서버로 전송 등)
-    if (!isLessLimit && !isOverLimit && !isOverLetterLimit)
-      console.log('Essay Submitted:', essaySubject, essayText);
-    else console.log('Check Letter Length. Too less or Too much:', essayText);
-  };
 
-  return (
-    <Wrapper>
-      <SubjectInfo>Write an essay about the subject below.</SubjectInfo>
-      <SubjectText>{essaySubject}</SubjectText>
-      <BeforeTextArea>
-        <WordCount $isOverLimit={isOverLimit}>
-          {wordCount}/{MAX_WORDS} words
-        </WordCount>
-      </BeforeTextArea>
-      <TextArea
-        value={essayText}
-        onChange={handleTextChange}
-        $isOverLimit={isOverLimit}
-      />
-      <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
-      <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
-    </Wrapper>
-  );
+
+  // ---------------------------––----------------------------------------------
+  // Return
+  let content;
+  if (isLoading) {
+    content = <p>Loading...</p>;
+  } else if (error) {
+    content = <p>{error}</p>;
+  } else {
+    content = (
+      <>
+        <SubjectInfo>{topic.title}</SubjectInfo>
+        <SubjectText>{topic.description}</SubjectText>
+        <BeforeTextArea>
+          <WordCount $isOverLimit={isOverLimit}>
+            {wordCount}/{MAX_WORDS} words
+          </WordCount>
+        </BeforeTextArea>
+        <TextArea
+          value={text}
+          onChange={handleTextChange}
+          $isOverLimit={isOverLimit}
+        />
+        <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
+        <SubmitButton onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit'}
+        </SubmitButton>
+        {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
+      </>
+    );
+  }
+  return <Wrapper>{content}</Wrapper>;
 };
 
 export default Subject;
