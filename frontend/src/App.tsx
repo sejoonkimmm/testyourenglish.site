@@ -11,7 +11,6 @@ import ArticleInterface from './interface/ArticleInterface';
 import Panel from './pages/Panel';
 import Review from './pages/Review';
 import Subject from './pages/Subject';
-import History from './pages/History';
 import articles from './pages/articles/_articles';
 import ArticleList from './pages/articles/ArticleList';
 import ArticleDetail from './pages/articles/ArticleDetail';
@@ -51,12 +50,6 @@ const App: React.FC = () => {
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
   };
-  const setPanelOn = () => {
-    setIsPanelOpen(true);
-  };
-  const setPanelOff = () => {
-    setIsPanelOpen(false);
-  };
 
   // Router Control
   const navigate = useNavigate();
@@ -89,13 +82,10 @@ const App: React.FC = () => {
         <Panel
           isPanelOpen={isPanelOpen}
           togglePanel={togglePanel}
-          setPanelOn={setPanelOn}
-          setPanelOff={setPanelOff}
         >
           <Routes>
             <Route path="/article/:articleId" element={<ArticleDetail />} />
             <Route path="/" element={<Subject />} />
-            <Route path="/history" element={<History />} />
             <Route path="/review/:reviewId" element={<Review />} />
           </Routes>
         </Panel>
