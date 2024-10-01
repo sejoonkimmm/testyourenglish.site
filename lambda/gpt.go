@@ -201,7 +201,7 @@ func CallGPTTopicAPI() (map[string]Topic, error) {
 		Messages: []Message{
 			{
 				Role: "system",
-				Content: `You are an English teacher. Create 4 topics to test English proficiency. Respond in the following format exactly:
+				Content: `You are an English teacher. Create 6 topics to test English proficiency. Respond in the following format exactly:
 	
 	Topic 1: [Title]
 	Description: [Description]
@@ -213,6 +213,12 @@ func CallGPTTopicAPI() (map[string]Topic, error) {
 	Description: [Description]
 	
 	Topic 4: [Title]
+	Description: [Description]
+
+	Topic 5: [Title]
+	Description: [Description]
+
+	Topic 6: [Title]
 	Description: [Description]
 	
 	Do not include any other text in your response.`,
