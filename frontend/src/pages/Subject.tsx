@@ -8,6 +8,7 @@ import TopicInterface from '../interface/TopicInterface';
 const Wrapper = styled.div`
   flex-grow: 1;
   padding: 20px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -15,16 +16,6 @@ const Wrapper = styled.div`
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
-  }
-
-  /* Desktop View */
-  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    height: calc(100% - 80px); /* 고정된 높이 설정 */
-  }
-
-  /* Mobile View */
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    height: calc(100% - 160px); /* 고정된 높이 설정 */
   }
 `;
 
@@ -41,8 +32,6 @@ const SubjectText = styled.div`
   font-weight: 700;
   margin: 15px 0;
 `;
-
-const BeforeTextArea = styled.div``;
 
 const WordCount = styled.div<{ $isOverLimit: boolean }>`
   color: ${({ $isOverLimit, theme }) =>
@@ -82,7 +71,7 @@ const SubmitButton = styled.button`
   border: none;
   cursor: pointer;
   border-radius: 4px;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 800;
   width: 20%;
   font-size: 1.5rem;
@@ -90,12 +79,11 @@ const SubmitButton = styled.button`
   padding: 15px;
   margin-top: 20px;
   color: ${({ theme }) => theme.colors.primary};
-  background: ${({ theme }) => theme.colors.background};
 `;
 
 const FeedbackMessage = styled.p`
   font-size: 1.2rem;
-  color: ${({ theme }) => theme.colors.primary};
+  color: red;
   margin-top: 20px;
 `;
 
@@ -111,26 +99,41 @@ const Subject: React.FC = () => {
   const isToLess = text.length > MIN_LETTERS;
   const isOverLetterLimit = text.length > MAX_LETTERS;
   const isOverLimit = wordCount > MAX_WORDS;
-  
+
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
   };
-  
+
   // ---------------------------––----------------------------------------------
   // Topic
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [topic, setTopic] = useState<TopicInterface>({
     title: 'Descriptive Writing',
-    description: 'Write a detailed description of your favorite place, including sensory details that evoke sights, sounds, smells, tastes, and textures.'
+    description:
+      'Write a detailed description of your favorite place, including sensory details that evoke sights, sounds, smells, tastes, and textures.',
   });
   useEffect(() => {
     const fetchTopics = async () => {
+      setIsLoading(true); // 로딩 시작
+      setError(null); // 오류 초기화
+
       try {
-        const response = await fetch('https://we6jyg97u7.execute-api.eu-central-1.amazonaws.com/prod/topics');
+        const response = await fetch(
+          'https://we6jyg97u7.execute-api.eu-central-1.amazonaws.com/prod/topics',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ key: 'value' }),
+          }
+        );
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
+
         const data = await response.json();
 
         // Object에서 각 topic들을 배열로 변환
@@ -145,15 +148,17 @@ const Subject: React.FC = () => {
 
         setTopic(randomTopic);
       } catch (error) {
-        setError('Failed to fetch topics. Please check the console error and try again later.');
+        setError(
+          'Failed to fetch topics. Please check the console error and try again later.'
+        );
         console.error('Error fetching topics:', error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // 로딩 종료
       }
     };
+
     fetchTopics();
   }, []);
-
 
   // ---------------------------––----------------------------------------------
   // Submit
@@ -165,7 +170,7 @@ const Subject: React.FC = () => {
       if (!canSubmit) {
         setFeedback('You can submit again after 5 minutes.');
       } else {
-        setFeedback('Check Letter Length. 1000 ~ 2500 letter allowed.');
+        setFeedback('Check Letter Length. 1000 ~ 2500 letters allowed.');
       }
       return;
     }
@@ -173,40 +178,58 @@ const Subject: React.FC = () => {
     setIsSubmitting(true); // 제출 중으로 설정
     setCanSubmit(false); // 제출 비활성화
 
+    const requestBody = {
+      topic: topic.title,
+      text: text,
+    };
+
     try {
-      const response = await fetch('https://we6jyg97u7.execute-api.eu-central-1.amazonaws.com/prod/check', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          topic: topic.title,
-          text: text,
-        }),
-      });
+      const response = await fetch(
+        'https://we6jyg97u7.execute-api.eu-central-1.amazonaws.com/prod/check',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Submission failed. Check the request.');
+        // 서버의 응답이 JSON인지 아닌지 확인 후 적절히 처리
+        const errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          throw new Error(errorData.error || 'Unknown error occurred.');
+        } catch {
+          // JSON 형식이 아닐 경우 텍스트 그대로 오류 메시지 설정
+          throw new Error(errorText);
+        }
       }
 
       const result = await response.json();
-      setFeedback(`Submission successful: ${result.CEFR}, ${result.IELTS}, ${result.feedback}`);
-      
-      // 5분 후 다시 제출 가능하게 설정
-      setTimeout(() => {
-        setCanSubmit(true);
-        setFeedback(null); // 메시지 초기화
-      }, 5 * 60 * 1000); // 5분 = 300000ms
+      setFeedback(
+        `Submission successful. CEFR: ${result.CEFR}, IELTS: ${result.IELTS}, FEEDBACK: ${result.feedback}`
+      );
 
+      // 5분 후 다시 제출 가능하게 설정
+      setTimeout(
+        () => {
+          setCanSubmit(true);
+          setFeedback(null); // 메시지 초기화
+        },
+        5 * 60 * 1000
+      ); // 5분 = 300000ms
     } catch (error) {
-      setFeedback('Failed to submit the essay. Please try again.');
+      setFeedback(
+        'Error: ' +
+          (error instanceof Error ? error.message : JSON.stringify(error))
+      );
       console.error('Error submitting essay:', error);
     } finally {
       setIsSubmitting(false); // 제출 중 상태 해제
     }
   };
-
-
 
   // ---------------------------––----------------------------------------------
   // Return
@@ -220,21 +243,19 @@ const Subject: React.FC = () => {
       <>
         <SubjectInfo>{topic.title}</SubjectInfo>
         <SubjectText>{topic.description}</SubjectText>
-        <BeforeTextArea>
-          <WordCount $isOverLimit={isOverLimit}>
-            {wordCount}/{MAX_WORDS} words
-          </WordCount>
-        </BeforeTextArea>
+        <WordCount $isOverLimit={isOverLimit}>
+          {wordCount}/{MAX_WORDS} words
+        </WordCount>
         <TextArea
           value={text}
           onChange={handleTextChange}
           $isOverLimit={isOverLimit}
         />
         <Tip>Tip: Make sure your essay is concise and well-structured.</Tip>
+        {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
         <SubmitButton onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </SubmitButton>
-        {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
       </>
     );
   }
