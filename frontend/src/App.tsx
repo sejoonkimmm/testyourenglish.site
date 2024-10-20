@@ -1,95 +1,112 @@
-import React, { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import { theme } from './styles/theme';
 import GlobalStyle from './styles/globalStyles';
-import { fontTitleStyle, fontLightStyle } from './styles/theme';
 
-import { ThemeProvider } from './contexts/ThemeContext';
-import ArticleInterface from './interface/ArticleInterface';
+import fetchTopicsFromServer from './api/fetchTopicsFromServer';
+import useTopicStore from './store/useTopicStore';
 
-import Panel from './pages/Panel';
-import Review from './pages/Review';
-import Subject from './pages/Subject';
-import articles from './pages/articles/_articles';
-import ArticleList from './pages/articles/ArticleList';
-import ArticleDetail from './pages/articles/ArticleDetail';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import ErrorPage from './pages/ErrorPage';
 
 const Wrapper = styled.div`
-  height: 100vh;
   width: 100vw;
+  height: 100vh;
   display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  transition: 0.3s;
-
-  background-image: url('/background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 `;
 
-const Content = styled.div`
-  flex: 1;
-  padding: 30px 20px;
-  text-align: center;
+const Content = styled.div<{ $width: number; $height: number }>`
+  width: ${({ $width }) => `${$width}px`};
+  height: ${({ $height }) => `${$height}px`};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.colors.background};
+  border-radius: 20px;
+  overflow: hidden;
 
-  /* Desktop View */
-  @media (min-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    max-width: ${({ theme }) => theme.sizes.ContentDesktop};
-  }
-
-  /* Mobile View */
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+`;
+
+const ScrollableContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
 
 const App: React.FC = () => {
-  // Pannel Control
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const togglePanel = () => {
-    setIsPanelOpen(!isPanelOpen);
-  };
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const { topics, fetchTopics } = useTopicStore();
 
-  // Router Control
-  const navigate = useNavigate();
-  const handleLogoClick = () => {
-    setIsPanelOpen(false);
-    navigate('/');
-  };
-  const handleArticleClick = (articleId: string) => {
-    setIsPanelOpen(true);
-    navigate(`/article/${articleId}`);
-  };
+  useEffect(() => {
+    const updateDimensions = () => {
+      const { innerWidth, innerHeight } = window;
+      const aspectRatio = 9 / 16;
+      let width = innerWidth * 0.85;
+      let height = width / aspectRatio;
 
-  const articleList: ArticleInterface[] = articles;
+      if (height > innerHeight * 0.85) {
+        height = innerHeight * 0.85;
+        width = height * aspectRatio;
+      }
+
+      setDimensions({ width, height });
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (topics.length === 0) {
+      const fetchServerTopics = async () => {
+        try {
+          const topics = await fetchTopicsFromServer();
+          fetchTopics(topics);
+        } catch (error) {
+          console.error('Failed to fetch topics:', error);
+        }
+      };
+
+      fetchServerTopics();
+    }
+  }, [fetchTopics, topics.length]);
 
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <Wrapper>
-        <Content>
-          <h1 onClick={handleLogoClick} style={fontTitleStyle}>
-            Test Your English!
-          </h1>
-          <p style={fontLightStyle}>Your private essay reviewer.</p>
-          <hr style={{ width: '30%', marginTop: '32px' }} />
-          <ArticleList
-            articleList={articleList}
-            onArticleClick={handleArticleClick}
-          />
-        </Content>
-        <Panel
-          isPanelOpen={isPanelOpen}
-          togglePanel={togglePanel}
-        >
-          <Routes>
-            <Route path="/article/:articleId" element={<ArticleDetail />} />
-            <Route path="/" element={<Subject />} />
-            <Route path="/review/:reviewId" element={<Review />} />
-          </Routes>
-        </Panel>
-      </Wrapper>
+      <Router>
+        <Wrapper>
+          <Content $width={dimensions.width} $height={dimensions.height}>
+            <Navbar />
+            <ScrollableContent>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="*" element={<ErrorPage />} />
+              </Routes>
+            </ScrollableContent>
+          </Content>
+        </Wrapper>
+      </Router>
     </ThemeProvider>
   );
 };
