@@ -84,24 +84,11 @@ const ResultText = styled.div`
   line-height: 1.4;
 `;
 
-// const TryNewTopic = styled.a`
-//   font-size: 1rem;
-//   color: yellow;
-//   cursor: pointer;
-//   margin-top: 20px;
-//   text-decoration-line: none;
-//   &:hover {
-//     opacity: 0.6;
-//   }
-//   transition-duration: 0.3s;
-// `;
-
 const Home: React.FC = () => {
   const { topics, selectedTopicIndex } = useTopicStore();
   const currentTopic = topics[selectedTopicIndex] ?? null;
 
   const [text, setText] = useState('');
-  const [submitted, setSubmitted] = useState('');
   const [feedback, setFeedback] = useState<string>('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,7 +111,6 @@ const Home: React.FC = () => {
 
     setIsSubmitting(true);
     setCanSubmit(false);
-    setSubmitted(text);
 
     const requestBody = {
       topic: currentTopic?.title,
@@ -134,10 +120,9 @@ const Home: React.FC = () => {
     try {
       const response = await submitEssay({ requestBody });
       setFeedback(
-        `Submission successful!\nCEFR: ${response.CEFR}\nIELTS: ${response.IELTS}\n${response.feedback}\n${response.grammar}\n${response.improvements}\n${response.vocabulary}`
+        `CEFR: ${response.CEFR}<br />IELTS: ${response.IELTS}<br /><br /><b>Feedback:</b><br />${response.feedback}<br /><br /><b>Grammar:</b><br />${response.grammar}<br /><br /><b>Improvements:</b><br />${response.improvements}<br /><br /><b>Vocabulary:</b><br />${response.vocabulary}`
       );
       setError('');
-      // updateTopicScore(selectedTopicIndex, response.CEFR, response.IELTS);
 
       setTimeout(() => {
         setCanSubmit(true);
@@ -149,10 +134,6 @@ const Home: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
-  // const handleTryNewTopic = () => {
-  //   selectRandomTopic();
-  // };
 
   return (
     <Wrapper>
@@ -166,16 +147,6 @@ const Home: React.FC = () => {
       <SubmitButton onClick={handleSubmit} disabled={isSubmitting}>Submit</SubmitButton>
       {(feedback || error) && (
         <Result>
-          {feedback && (
-            <>
-              <ResultTitle style={{ color: '#28a745' }}>
-                Your Feedback:
-              </ResultTitle>
-              <ResultText>{feedback}</ResultText>
-              <br />
-              {/* <TryNewTopic onClick={handleTryNewTopic}>Try new topic?</TryNewTopic> */}
-            </>
-          )}
           {error && (
             <>
               <ResultTitle style={{ color: '#dc3545' }}>
@@ -185,12 +156,12 @@ const Home: React.FC = () => {
               <br />
             </>
           )}
-          {submitted && (
+          {feedback && (
             <>
-              <ResultTitle>
-                Your Submission:
+              <ResultTitle style={{ color: '#28a745' }}>
+                Your Feedback:
               </ResultTitle>
-              <ResultText>{submitted}</ResultText>
+              <ResultText dangerouslySetInnerHTML={{ __html: feedback }} />
               <br />
             </>
           )}
