@@ -19,7 +19,8 @@
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.26.2",
     "styled-components": "^6.1.12",
-    "styled-icons": "^10.47.1"
+    "styled-icons": "^10.47.1",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

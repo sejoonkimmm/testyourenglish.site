@@ -1,70 +1,18 @@
-import { css, DefaultTheme } from 'styled-components';
+import { DefaultTheme } from 'styled-components';
 
-const common = {
+export const theme: DefaultTheme = {
   colors: {
-    background: '#212121',
-    contentBackground: '#4B504A',
-    innerBackground: '#0E0E10',
-    text: '#E6E6F2',
-    primary: '#ffffff',
+    background: '#121212',
+    background_darker: '#060606',
+    background_gradient: 'linear-gradient(180deg, #242424 0%, #181920 100%);',
+    text: '#d3d2d2',
+    primary: '#f0f0f0',
     secondary: '#d1d1d1',
-    panelBackground: '#19181B',
+    success: '#28a745',
+    failure: '#dc3545',
   },
   breakpoints: {
-    mobile: '768px',
+    mobile: '400px',
     desktop: '1280px',
   },
-  sizes: {
-    ContentDesktop: '530px',
-    PanelDesktop: 'calc(100vw - 530px)',
-    ContentMobile: '100px',
-    PanelMobileMin: '100px',
-    PanelMobileMax: 'calc(100vh - 150px)',
-  },
-};
-
-export const lightTheme: DefaultTheme = {
-  colors: common.colors,
-  breakpoints: common.breakpoints,
-  sizes: common.sizes,
-};
-
-export const darkTheme: DefaultTheme = {
-  colors: common.colors,
-  breakpoints: common.breakpoints,
-  sizes: common.sizes,
-};
-
-export const slideIn = css`
-  @keyframes slideIn {
-    from {
-      transform: translateY(100%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-`;
-
-export const slideOut = css`
-  @keyframes slideOut {
-    from {
-      transform: translateY(0);
-    }
-    to {
-      transform: translateY(100%);
-    }
-  }
-`;
-
-// --------------------------------------------------------------------
-
-export const fontTitleStyle = {
-  fontFamily: 'Ananda Black',
-  wordSpacing: '5px',
-  cursor: 'pointer',
-};
-
-export const fontLightStyle = {
-  fontWeight: '100',
 };

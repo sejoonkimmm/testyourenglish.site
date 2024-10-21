@@ -4,23 +4,17 @@ declare module 'styled-components' {
   export interface DefaultTheme {
     colors: {
       background: string;
-      innerBackground: string;
+      background_darker: string;
+      background_gradient: string;
       text: string;
       primary: string;
       secondary: string;
-      contentBackground: string;
-      panelBackground: string;
+      success: string;
+      failure: string;
     };
     breakpoints: {
       mobile: string;
       desktop: string;
-    };
-    sizes: {
-      ContentDesktop: string;
-      PanelDesktop: string;
-      ContentMobile: string;
-      PanelMobileMin: string;
-      PanelMobileMax: string;
     };
   }
 }
